@@ -97,6 +97,20 @@
                         req.withCredentials = "true";
                     }
                 }
+                if (data && typeof data != "string") {
+                    (function () {
+                        var found = false;
+                        for (var key in spec.headers) {
+                            if (key.toLowerCase() == "content-type") {
+                                found = true;
+                                break;
+                            }
+                        }
+                        if (!found) {
+                            req.setRequestHeader("Content-Type", "application/json");
+                        }
+                    })();
+                }
                 req.onreadystatechange = function() {
                     var data;
                     var err;
@@ -159,6 +173,20 @@
                         spec.headers.Authorization = "Basic " + new Buffer(spec.auth.user).toString("base64");
                     }
                 }
+                if (data && typeof data != "string") {
+                    (function () {
+                        var found = false;
+                        for (var key in spec.headers) {
+                            if (key.toLowerCase() == "content-type") {
+                                found = true;
+                                break;
+                            }
+                        }
+                        if (!found) {
+                            spec.headers["Content-Type"] = "application/json";
+                        }
+                    })();
+                }
                 var impl = spec.schema === "https" ? require("https") : require("http");
                 var req = impl.request(spec, function(res) {
                     var data = "";
@@ -207,11 +235,7 @@
                     reject(e);
                 });
                 if (data) {
-                    if (typeof data == "string") {
-                        req.write(data);
-                    } else {
-                        req.write(JSON.stringify(data));
-                    }
+                    req.write(typeof data == "string" ? data : JSON.stringify(data));
                 }
                 req.end();
             });

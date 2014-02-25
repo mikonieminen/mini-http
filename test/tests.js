@@ -108,6 +108,23 @@
                     done(reason);
                 });
             });
+            it ("JSON object, add content-type header if missing", function (done) {
+                var spec = {
+                    hostname: "localhost",
+                    port: 8080,
+                    path: "/json"
+                };
+
+                http.post(spec, data.jsonMessage).then(function (response) {
+                    if (response.code === 204) {
+                        done();
+                    } else {
+                        done(new Error("Expecting 204, got " + response.code));
+                    }
+                }, function (reason) {
+                    done(reason);
+                });
+            });
         });
 
         describe("PUT", function () {
