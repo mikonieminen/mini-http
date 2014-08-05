@@ -53,9 +53,10 @@
         });
     }
 
-    function Response(code, data) {
+    function Response(code, data, headers) {
         this.code = code;
         this.data = data;
+        this.headers = headers;
     }
 
 
@@ -124,12 +125,12 @@
                                     console.error(e.stack);
                                     reject (e);
                                 }
-                                resolve(new Response(req.status, data));
+                                resolve(new Response(req.status, data, req.getAllResponseHeaders()));
                             } else {
-                                resolve(new Response(req.status, req.responseText));
+                                resolve(new Response(req.status, req.responseText, req.getAllResponseHeaders()));
                             }
                         } else  if (req.status === 204) {
-                            resolve(new Response(req.status, null));
+                            resolve(new Response(req.status, null, req.getAllResponseHeaders()));
                         } else {
                             if (req.getResponseHeader("content-type") === "application/json") {
                                 try {
@@ -137,6 +138,7 @@
                                     err = new Error("Server returned: " + req.status);
                                     err.data = data;
                                     err.code = req.status;
+                                    err.headers = req.getAllResponseHeaders();
                                     reject(err);
                                 } catch (e) {
                                     console.error("Error parsin JSON data into an object: " + e);
@@ -147,6 +149,7 @@
                                 err = new Error("Server returned: " + req.status);
                                 err.data = req.responseText;
                                 err.code = req.status;
+                                err.headers = req.getAllResponseHeaders();
                                 reject(err);
                             }
                         }
@@ -204,27 +207,37 @@
                                 } catch (e) {
                                     reject (e);
                                 }
-                                resolve(new Response(res.statusCode, parsed));
+                                resolve(new Response(res.statusCode, parsed, res.headers));
                             } else {
-                                resolve(new Response(res.statusCode, data));
+                                resolve(new Response(res.statusCode, data, res.headers));
                             }
                         } else if (res.statusCode === 204) {
-                            resolve(new Response(res.statusCode, null));
+                            resolve(new Response(res.statusCode, null, res.headers));
                         } else {
                             if (res.headers["content-type"] === "application/json") {
-                                try {
-                                    parsed = JSON.parse(data);
+                                if (data && data.length > 0) {
+                                    try {
+                                        parsed = JSON.parse(data);
+                                        err = new Error("Server returned: " + res.statusCode);
+                                        err.data = parsed;
+                                        err.code = res.statusCode;
+                                        err.headers = res.headers;
+                                        reject(err);
+                                    } catch (e) {
+                                        reject(e);
+                                    }
+                                } else {
                                     err = new Error("Server returned: " + res.statusCode);
-                                    err.data = parsed;
+                                    err.data = data;
                                     err.code = res.statusCode;
+                                    err.headers = res.headers;
                                     reject(err);
-                                } catch (e) {
-                                    reject(e);
                                 }
                             } else {
                                 err = new Error("Server returned: " + res.statusCode);
                                 err.data = data;
                                 err.code = res.statusCode;
+                                err.headers = res.headers;
                                 reject(err);
                             }
                         }
