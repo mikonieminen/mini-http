@@ -5,62 +5,15 @@
     var path = require("path");
     var http = require("http");
 
+    var connect = require("connect");
+
+    var Promise = require("mini-promise").Promise;
+
+    var app = require("mini-test-server");
+
     var data = require(__dirname + "/test/data.js");
 
     var PORT = 8080;
-
-    function staticContent(req, res, next) {
-        var filename;
-        var mimetype;
-        var match;
-        var m;
-        if ((match = req.url.match(/^\/mocha\/(.*)/)) !== null) {
-            m = require.resolve("mocha");
-            filename = path.dirname(m) + "/" + match[1];
-            if (match[1] === "mocha.js") {
-                mimetype = "application/javascript";
-            } else {
-                mimetype = "text/css";
-            }
-        } else if ((match = req.url.match(/^\/mini-http\.js/)) !== null) {
-            filename = __dirname + "/mini-http.js";
-            mimetype = "application/javascript";
-        } else if ((match = req.url.match(/^\/(mini-.*)\.js/)) !== null) {
-            filename = require.resolve(match[1]);
-            mimetype = "application/javascript";
-        } else if ((match = req.url.match(/^\/test\/tests\.js/)) !== null) {
-            filename = __dirname + "/test/tests.js";
-            mimetype = "application/javascript";
-        } else if ((match = req.url.match(/^\/test\/data\.js/)) !== null) {
-            filename = __dirname + "/test/data.js";
-            mimetype = "application/javascript";
-        } else if ((match = req.url.match(/^\/test\/test\.html/)) !== null) {
-            filename = __dirname + "/test/test.html";
-            mimetype = "text/html";
-        }
-
-        if (filename) {
-            fs.exists(filename, function (exists) {
-                if (exists) {
-                    var fileStream = fs.createReadStream(filename);
-
-                    res.writeHead(200, { "Content-Type": mimetype });
-
-                    fileStream.on('data', function (data) {
-                        res.write(data);
-                    });
-
-                    fileStream.on('end', function() {
-                        res.end();
-                    });
-                } else {
-                    next();
-                }
-            });
-        } else {
-            next();
-        }
-    }
 
     function handleRequest(req, res) {
         var url = req.url;
@@ -202,11 +155,20 @@
         }
     }
 
-    var app = function (req, res) {
-        staticContent(req, res, function () {
-            handleRequest(req, res);
-        });
-    };
-
-    var server = http.createServer(app).listen(PORT);
+    new Promise(function (resolve, reject) {
+        var app = connect();
+    }).then(function (mocha) {
+        var m = require.resolve("mocha");
+        app.use(router.static("/mocha/mocha.css", path.dirname(mocha) + "/mocha.css"));
+        app.use(router.static("/mocha/mocha.js", path.dirname(mocha) + "/mocha.js"));
+    }).then(function () {
+        app.use(router.miniModule("/modules/mini-module.js", "mini-promise"));
+    }).then(function () {
+        app.use(router.handler(handleRequest));
+    }).then(function () {
+        http.createServer(app).listen(PORT);
+        console.log("Ready for requests");
+    }, function (reason) {
+        console.error("Failed to start server: ", reason);
+    });
 })();
