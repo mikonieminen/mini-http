@@ -69,10 +69,10 @@
                 if (!(spec instanceof RequestSpecification)) {
                     spec = new RequestSpecification(spec);
                 }
-                console.assert(spec.domain, new Error("Missing hostname or IP address"));
-                var url = spec.scheme + "://" +
-                        spec.domain +
-                        (spec.port ? (":" + spec.port) : "") +
+                var url =
+                        (spec.scheme ? spec.scheme + ":" : window.location.protocol) + "//" +
+                        (spec.domain ? spec.domain : window.location.hostname) +
+                        (spec.port ? (":" + spec.port) : (":" + window.location.port)) +
                         (spec.path ? spec.path : "") +
                         (spec.query ? ("?" + spec.query) : "") +
                         (spec.hash ? ("#" + spec.hash) : "");
