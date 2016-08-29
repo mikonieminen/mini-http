@@ -3,6 +3,10 @@
   "description": "Module that simplifies making HTTP requests",
   "version": "0.0.1",
   "author": "Miko Nieminen <miko.nieminen@iki.fi>",
+  "homepage": "https://github.com/mikonieminen/mini-http",
+  "bugs": {
+    "url" : "https://github.com/mikonieminen/mini-http/issues"
+  },
   "keywords": [
     "http",
     "mini-module"
