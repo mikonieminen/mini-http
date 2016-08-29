@@ -9,18 +9,13 @@
   ],
   "main": "mini-http.js",
   "dependencies": {
-    "mini-promise": "*"
+    "mini-promise-aplus": "*"
   },
   "devDependencies": {
+    "connect": "^3.4.1",
     "mini-module": "*",
-    "mocha": "*",
-    "grunt": "~0.4.2",
-    "grunt-contrib-watch": "~0.5.3",
-    "grunt-contrib-jshint": "~0.8.0",
-    "grunt-mocha-test": "~0.9.3",
-    "grunt-concurrent": "~0.4.3",
-    "grunt-nodemon": "~0.2.0",
-    "grunt-cli": "~0.1.13"
+    "mini-router": "*",
+    "mocha": "*"
   },
   "engines": {
     "node": ">= 0.10.x"

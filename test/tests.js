@@ -1,5 +1,5 @@
 ;(function (exports) {
-    var Promise = require("mini-promise").Promise;
+    var Promise = require("mini-promise-aplus").Promise;
     var http = require("../mini-http.js");
 
     var data = require("./data.js");

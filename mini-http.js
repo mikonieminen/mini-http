@@ -1,7 +1,7 @@
 ;(function (module) {
     var request = null;
 
-    var Promise = require("mini-promise").Promise;
+    var Promise = require("mini-promise-aplus").Promise;
 
     function RequestSpecification(spec) {
         var self = this;

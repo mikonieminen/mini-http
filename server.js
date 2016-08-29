@@ -4,12 +4,12 @@
     var fs = require("fs");
     var path = require("path");
     var http = require("http");
+    var mocha = require("mocha");
 
     var connect = require("connect");
+    var Router = require("mini-router").Router;
 
-    var Promise = require("mini-promise").Promise;
-
-    var app = require("mini-test-server");
+    var Promise = require("mini-promise-aplus").Promise;
 
     var data = require(__dirname + "/test/data.js");
 
@@ -156,16 +156,26 @@
     }
 
     new Promise(function (resolve, reject) {
-        var app = connect();
-    }).then(function (mocha) {
+        var router = new Router("TestRouter");
+        resolve(router);
+    }).then(function (router) {
         var m = require.resolve("mocha");
-        app.use(router.static("/mocha/mocha.css", path.dirname(mocha) + "/mocha.css"));
-        app.use(router.static("/mocha/mocha.js", path.dirname(mocha) + "/mocha.js"));
-    }).then(function () {
-        app.use(router.miniModule("/modules/mini-module.js", "mini-promise"));
-    }).then(function () {
-        app.use(router.handler(handleRequest));
-    }).then(function () {
+        router.static("/mocha/mocha.css", path.dirname(m) + "/mocha.css");
+        router.static("/mocha/mocha.js", path.dirname(m) + "/mocha.js");
+        router.static("/mini-promise.js", require.resolve("mini-promise-aplus"));
+        router.static("/mini-module.js", require.resolve("mini-module"));
+        router.static("/mini-http.js", "./mini-http.js");
+        router.static("/test", "./test/");
+        router.add(["GET", "POST", "PUT", "DELETE"], "/", handleRequest);
+        router.add(["GET", "POST", "PUT", "DELETE"], "/json", handleRequest);
+        router.add(["GET", "POST", "PUT", "DELETE"], "/json/empty", handleRequest);
+        router.add(["GET", "POST", "PUT", "DELETE"], "/auth", handleRequest);
+        return router;
+    }).then(function (router) {
+        var app = connect();
+        app.use(router.connect());
+        return app;
+    }).then(function (app) {
         http.createServer(app).listen(PORT);
         console.log("Ready for requests");
     }, function (reason) {
