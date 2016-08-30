@@ -1,0 +1,25 @@
+{
+  "name": "mini-http-request",
+  "main": "mini-http.js",
+  "version": "0.0.1",
+  "homepage": "https://github.com/mikonieminen/mini-http",
+  "authors": [
+    "Miko Nieminen <miko.nieminen@iki.fi>"
+  ],
+  "description": "Library for simplifying making HTTP requests",
+  "keywords": [
+    "http",
+    "mini-module"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "mini-promise-aplus": "0.1.x"
+  }
+}
