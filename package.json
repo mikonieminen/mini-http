@@ -1,7 +1,7 @@
 {
   "name": "mini-http-request",
   "description": "Module that simplifies making HTTP requests",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "author": "Miko Nieminen <miko.nieminen@iki.fi>",
   "homepage": "https://github.com/mikonieminen/mini-http",
   "bugs": {
