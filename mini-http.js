@@ -7,10 +7,14 @@
         var self = this;
 
         this.method = spec.method ? spec.method : "GET";
-        this.scheme = spec.scheme ? spec.scheme : (spec.protocol ? spec.protocol : "http");
+        this.scheme = spec.scheme ? spec.scheme : (spec.protocol ? spec.protocol : "http:");
+        if (this.scheme.charAt(this.scheme.length - 1) != ":") {
+            // Just making sure that scheme ends with colon
+            this.scheme += ":";
+        }
         this.domain = spec.domain ? spec.domain : (spec.hostname ? spec.hostname : null);
         this.port = spec.port ? spec.port : null;
-        this.path = spec.path ? spec.path : null;
+        this.path = spec.path ? spec.path : (spec.pathname ? spec.pathname : null);
         this.query_string = spec.query_string ? spec.query_path : (spec.query ? spec.query : null);
         this.fragment_id = spec.fragment_id ? spec.fragment_id : (spec.fragment ? spec.fragment : (spec.hash ? spec.hash : null));
         this.auth = spec.auth ? spec.auth : null;
@@ -51,7 +55,23 @@
                 return val;
             }
         });
+
+        Object.defineProperty(this, "pathname", {
+            configurable: false,
+            enumerable: false,
+            get: function () {
+                return self.path;
+            },
+            set: function (val) {
+                self.path = val;
+                return val;
+            }
+        });
     }
+
+    RequestSpecification.prototype.clone = function () {
+        return new RequestSpecification(this);
+    };
 
     function Response(code, data, headers) {
         this.code = code;
@@ -70,7 +90,7 @@
                     spec = new RequestSpecification(spec);
                 }
                 var url =
-                        (spec.scheme ? spec.scheme + ":" : window.location.protocol) + "//" +
+                        (spec.scheme ? spec.scheme : window.location.protocol) + "//" +
                         (spec.domain ? spec.domain : window.location.hostname) +
                         (spec.port ? (":" + spec.port) : (":" + window.location.port)) +
                         (spec.path ? spec.path : "") +
@@ -190,7 +210,7 @@
                         }
                     })();
                 }
-                var impl = spec.schema === "https" ? require("https") : require("http");
+                var impl = spec.schema === "https:" ? require("https") : require("http");
                 var req = impl.request(spec, function(res) {
                     var data = "";
                     res.setEncoding('utf8');
