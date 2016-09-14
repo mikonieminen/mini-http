@@ -223,6 +223,9 @@
                     })();
                 }
                 var impl = spec.schema === "https:" ? require("https") : require("http");
+                // node.js requires search to be part of path
+                spec.path = spec.path && spec.search ? spec.path + "?" + spec.search :
+                        (spec.search ? "?" + spec.search : spec.path);
                 var req = impl.request(spec, function(res) {
                     var data = "";
                     res.setEncoding('utf8');
