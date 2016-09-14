@@ -137,7 +137,7 @@
                     var err;
                     if (req.readyState == 4) {
                         if (req.status !== 204 && req.status >= 200 && req.status < 300) {
-                            if (req.getResponseHeader("content-type") === "application/json") {
+                            if (req.getResponseHeader("content-type") && req.getResponseHeader("content-type").match("application/json")) {
                                 try {
                                     data = JSON.parse(req.responseText);
                                 } catch (e) {
@@ -152,7 +152,7 @@
                         } else  if (req.status === 204) {
                             resolve(new Response(req.status, null, req.getAllResponseHeaders()));
                         } else {
-                            if (req.getResponseHeader("content-type") === "application/json") {
+                            if (req.getResponseHeader("content-type") && req.getResponseHeader("content-type").match("application/json")) {
                                 try {
                                     data = JSON.parse(req.responseText);
                                     err = new Error("Server returned: " + req.status);
@@ -221,7 +221,7 @@
                         var parse;
                         var err;
                         if (res.statusCode !== 204 && res.statusCode >= 200 && res.statusCode < 300) {
-                            if (res.headers["content-type"] === "application/json") {
+                            if (res.headers["content-type"] && res.headers["content-type"].match("application/json")) {
                                 try {
                                     parsed = JSON.parse(data);
                                 } catch (e) {
@@ -234,7 +234,7 @@
                         } else if (res.statusCode === 204) {
                             resolve(new Response(res.statusCode, null, res.headers));
                         } else {
-                            if (res.headers["content-type"] === "application/json") {
+                            if (res.headers["content-type"] && res.headers["content-type"].match("application/json")) {
                                 if (data && data.length > 0) {
                                     try {
                                         parsed = JSON.parse(data);

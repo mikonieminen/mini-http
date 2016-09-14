@@ -7,11 +7,33 @@
     describe("mini-http test suite", function () {
         describe("GET", function () {
             describe("JSON", function () {
-                it ("object", function (done) {
+                it ("return object when content type is application/json", function (done) {
                     var spec = {
                         hostname: "localhost",
                         port: 8080,
                         path: "/json"
+                    };
+                    http.get(spec).then(function (response) {
+                        if (response.code === 200) {
+                            if (response.data && response.data.message == data.jsonMessage.message) {
+                                done();
+                            } else {
+                                done(new Error("Returned data does not mach expected"));
+                            }
+                        } else {
+                            done(new Error("Expecting response code 200, got " + response.code));
+                        }
+                    }, function (reason) {
+                        done(new Error(reason.toString()));
+                    });
+                });
+
+                it ("return object when content type is application/json with charset parameter", function (done) {
+                    var spec = {
+                        hostname: "localhost",
+                        port: 8080,
+                        path: "/json",
+                        query: "charset=utf8"
                     };
                     http.get(spec).then(function (response) {
                         if (response.code === 200) {

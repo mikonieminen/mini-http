@@ -20,6 +20,7 @@
         var headers = req.headers;
         var json = false;
         var empty = false;
+        var encoding = false;
         var body = "";
 
         if (url.match(/^\/auth/)) {
@@ -50,17 +51,26 @@
             empty = true;
         }
 
+
+        if (url.match(/charset=([^;,])/))  {
+            encoding = true;
+        }
+
         switch (req.method) {
         case "GET":
             if (empty) {
-                if (json) {
+                if (encoding) {
                     res.writeHead(204, { "content-type": "application/json" });
                 } else {
                     res.writeHead(204);
                 }
             } else {
                 if (json) {
-                    res.writeHead(200, { "content-type": "application/json" });
+                    if (encoding) {
+                        res.writeHead(200, { "content-type": "application/json;charset=utf-8" });
+                    } else {
+                        res.writeHead(200, { "content-type": "application/json" });
+                    }
                     res.write(JSON.stringify(data.jsonMessage, null, '\t'));
                 } else {
                     res.write(data.message);
