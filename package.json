@@ -15,6 +15,10 @@
   "dependencies": {
     "mini-promise-aplus": "*"
   },
+  "scripts": {
+    "start-test-server": "node ./test/server.js",
+    "test": "mocha test/test.js"
+  },
   "devDependencies": {
     "connect": "^3.4.1",
     "mini-module": "*",

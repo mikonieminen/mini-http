@@ -11,7 +11,7 @@
 
     var Promise = require("mini-promise-aplus").Promise;
 
-    var data = require(__dirname + "/test/data.js");
+    var data = require(__dirname + "/data.js");
 
     var PORT = 8080;
 
