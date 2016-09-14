@@ -15,7 +15,7 @@
         this.domain = spec.domain ? spec.domain : (spec.hostname ? spec.hostname : null);
         this.port = spec.port ? spec.port : null;
         this.path = spec.path ? spec.path : (spec.pathname ? spec.pathname : null);
-        this.query_string = spec.query_string ? spec.query_path : (spec.query ? spec.query : null);
+        this.search = spec.query_path ? spec.query_path : (spec.query ? spec.query : (spec.search ? spec.search : null));
         this.fragment_id = spec.fragment_id ? spec.fragment_id : (spec.fragment ? spec.fragment : (spec.hash ? spec.hash : null));
         this.auth = spec.auth ? spec.auth : null;
         this.headers = (spec.headers) ? spec.headers : {};
@@ -24,10 +24,22 @@
             configurable: false,
             enumerable: false,
             get: function () {
-                return self.query_string;
+                return self.search;
             },
             set: function (val) {
-                self.query_string = val;
+                self.search = val;
+                return val;
+            }
+        });
+
+        Object.defineProperty(this, "query_string", {
+            configurable: false,
+            enumerable: false,
+            get: function () {
+                return self.search;
+            },
+            set: function (val) {
+                self.search = val;
                 return val;
             }
         });
